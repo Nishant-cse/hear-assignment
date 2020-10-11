@@ -1,0 +1,64 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes" access="global" controller="ActivateAccountCmpController">
+    <!--Attributes-->
+    <aura:attribute name="data" type="Object"/>
+    <aura:attribute name="tempData" type="Object"/>
+    <aura:attribute name="mycolumns" type="List"/>
+    <aura:attribute name="filter1Value" type="String" default="--None--"/>
+    <aura:attribute name="filter2Value" type="String" default="--None--"/>
+    <aura:attribute name="filter3Value" type="String" default="--None--"/>
+    <aura:attribute name="showSecondFilter" type="Boolean" default="false"/>
+    <aura:attribute name="showIndustryFilter" type="Boolean" default="false"/>
+    <aura:attribute name="recordsToActivate" type="Account[]" default="[]"/>
+    <!--Handlers-->
+    <aura:handler name="init" value="{! this }" action="{! c.init }"/>
+    <aura:handler name="change" value="{!v.filter1Value}" action="{!c.onChangefilter1}"/>
+    <aura:handler name="change" value="{!v.filter2Value}" action="{!c.onChangefilter1}"/>
+    <aura:handler name="change" value="{!v.filter3Value}" action="{!c.onChangefilter1}"/>
+    <aura:handler event="force:refreshView" action="{!c.init}" />
+    <!--Data Table to show Account records-->
+    
+    <lightning:card title="Accounts" iconName="standard:account" class="slds-p-around_x-small">
+        <aura:set attribute="actions">
+            <lightning:button variant="brand-outline" label="Activate Account" onclick="{!c.activateRecords}"/>
+        </aura:set>
+        <fieldset class="fieldSetSetup">
+            <legend class="legendSetup">Filters</legend>
+            <div class="slds-grid slds-gutters">
+                <div class="slds-col slds-p-horizontal_medium">
+                    <span>
+                        <c:PicklistValuesCmp sObjectName="Account" fieldName="Type" selectedValue="{!v.filter1Value}" label="Type" aura:id="filter1" />
+                    </span>
+                </div>
+                <div class="slds-col slds-p-horizontal_medium">
+                    
+                    <aura:if isTrue="{!v.showSecondFilter}">
+                        <aura:if isTrue="{!v.showIndustryFilter}">
+                            <span>
+                                <c:PicklistValuesCmp sObjectName="Account" fieldName="Industry" selectedValue="{!v.filter2Value}" label="Industry" aura:id="filter2"/>
+                            </span>
+                            <aura:set attribute="else">
+                                <span>
+                                    <c:PicklistValuesCmp sObjectName="Account" fieldName="AccountSource" selectedValue="{!v.filter3Value}" label="Source" aura:id="filter3"/>
+                                </span>
+                            </aura:set>
+                        </aura:if> 
+                    </aura:if>
+                </div>
+            </div>
+        </fieldset>
+        <br/>
+        <fieldset class="fieldSetSetup">
+            <legend class="legendSetup">Data Table</legend>
+            <aura:if isTrue="{!not(empty(v.data))}">
+                <lightning:datatable data="{! v.data }"
+                                     columns="{! v.mycolumns }"
+                                     keyField="Id"
+                                     hideCheckboxColumn="false"
+                                     onrowselection="{! c.getSelectedRecord}"/>
+                <aura:set attribute="else">
+                    <div class="slds-align_absolute-center">No Data Found</div>
+                </aura:set>
+            </aura:if>
+        </fieldset>
+    </lightning:card>
+</aura:component>

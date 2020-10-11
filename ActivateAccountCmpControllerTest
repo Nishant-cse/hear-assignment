@@ -1,0 +1,22 @@
+@istest
+public class ActivateAccountCmpControllerTest {
+    static testmethod void validateActiveAccountMethod(){
+        List<Account> accList= new List<Account>();
+        for(Integer i=0; i< 10; i++){
+            Account acc= new Account();
+            acc.Name= 'Test-'+i;
+            acc.AccountSource= 'Web';
+            acc.Type= 'Customer - Direct';
+            acc.Industry= 'Consulting';
+            accList.add(acc);
+        }
+        insert accList;
+        ActivateAccountCmpController.getAccounts();
+        ActivateAccountCmpController.getPickListValues('Account', 'Type');
+        for(Account acc : accList){
+            acc.Active__c= 'Yes';
+        }
+        ActivateAccountCmpController.activateSelectedRecords(accList);
+    }
+       
+}
